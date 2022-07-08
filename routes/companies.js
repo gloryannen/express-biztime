@@ -4,6 +4,7 @@ const db = require("../db");
 const express = require("express");
 const ExpressError = require("../expressError");
 const router = express.Router();
+const slugify = require("slugify");
 
 // Get all companies
 router.get("/", async (req, res, next) => {
@@ -34,7 +35,8 @@ router.get("/:code", async (req, res, next) => {
 // Create company
 router.post("/", async (req, res, next) => {
   try {
-    const { code, name, description } = req.body;
+    const { name, description } = req.body;
+    const code = slugify(name, { lower: true });
     const results = await db.query(
       `INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description`,
       [code, name, description]
@@ -57,7 +59,7 @@ router.put("/:code", async (req, res, next) => {
     if (results.rows.length === 0) {
       throw new ExpressError(`Can't update company with code of ${code}`, 404);
     }
-    return res.status(200).json({ company: results.rows[0] });
+    return res.status(204).json({ company: results.rows[0] });
   } catch (e) {
     return next(e);
   }

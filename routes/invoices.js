@@ -67,7 +67,7 @@ router.post("/", async function (req, res, next) {
       [comp_code, amt]
     );
 
-    return res.json({ invoice: results.rows[0] });
+    return res.status(201).json({ invoice: results.rows[0] });
   } catch (err) {
     return next(err);
   }
@@ -82,8 +82,8 @@ router.put("/:id", async function (req, res, next) {
 
     const currResults = await db.query(
       `SELECT paid
-             FROM invoices
-             WHERE id = $1`,
+      FROM invoices
+      WHERE id = $1`,
       [id]
     );
 
@@ -109,7 +109,7 @@ router.put("/:id", async function (req, res, next) {
       [amt, paid, paidDate, id]
     );
 
-    return res.json({ invoice: results.rows[0] });
+    return res.status(204).json({ invoice: results.rows[0] });
   } catch (err) {
     return next(err);
   }
